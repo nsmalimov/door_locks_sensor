@@ -1,0 +1,7 @@
+docker run --name some-postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=door_locks_sensor -d -p 5432:5432 postgres
+
+docker run POSTGRES_DB=door_locks_sensor library/postgres
+
+1. postgressql
+2. rabbitmq
+3. redis
