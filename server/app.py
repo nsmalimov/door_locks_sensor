@@ -8,6 +8,8 @@ from settings import PSQL_USERNAME, PSQL_PASSWORD, PSQL_PORT, PSQL_URL, PSQL_DAT
 app = web.Application()
 
 
+# todo: autorestart при изменении кода
+
 def setup_routes(app):
     app.router.add_route('*', '/', routes.ping)
 

@@ -23,9 +23,11 @@ async def user(request):
     elif request.method == 'DELETE':
         return await user_delete(request)
 
+    # TODO: PATCH
+
 
 async def sensor(request):
-    if request.headers.get('AUTH_TOKEN') == TOKEN:
+    if request.headers.get('AUTH_TOKEN') != TOKEN:
         return web.HTTPForbidden()
 
     if request.method == 'GET':
@@ -37,9 +39,11 @@ async def sensor(request):
     elif request.method == 'DELETE':
         return await sensor_delete(request)
 
+    # TODO: PATCH
+
 
 async def notification_log(request):
-    if request.headers.get('AUTH_TOKEN') == TOKEN:
+    if request.headers.get('AUTH_TOKEN') != TOKEN:
         return web.HTTPForbidden()
 
     return await filtred_log_get(request)
