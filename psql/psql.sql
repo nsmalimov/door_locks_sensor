@@ -1,7 +1,7 @@
 create database door_lock_sensor;
 
 CREATE TABLE USER_TABLE(
-   ID INT PRIMARY KEY     NOT NULL,
+   ID SERIAL PRIMARY KEY    NOT NULL,
    URL           TEXT    UNIQUE  NOT NULL,
    NAME TEXT
 );
@@ -24,7 +24,7 @@ CREATE TABLE SENSOR_DATA_LOG(
   time TIMESTAMP
 );
 
-CREATE TABLE NOTIFICATIONS_LOG(
+CREATE TABLE NOTIFICATION_LOG(
   type notification_type,
   locked BOOLEAN,
   stable BOOLEAN,
