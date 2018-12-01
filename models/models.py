@@ -1,6 +1,7 @@
 from enum import Enum
 from datetime import datetime
 
+# использовать в будущем (SQLAlchemy)
 
 class UserRecord():
     id: int = None

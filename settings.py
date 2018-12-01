@@ -12,3 +12,10 @@ PSQL_DATABASE = 'door_locks_sensor'
 
 REDIS_URL = 'localhost'
 REDIS_PORT = 6379
+
+RABBITMQ_URL = 'localhost'
+RABBITMQ_USER = 'guest'
+RABBITMQ_PASSWORD = 'guest'
+RABBITMQ_PORT = 5672
+
+RABBITMQ_QUEUE_SENSOR = 'sensors'

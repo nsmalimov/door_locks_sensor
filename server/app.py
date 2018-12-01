@@ -16,6 +16,8 @@ def setup_routes(app):
     app.router.add_route('*', '/user', routes.user)
     app.router.add_route('*', '/sensor', routes.sensor)
 
+    app.router.add_route('*', '/relation', routes.relation)
+
     app.router.add_route('*', '/notification_log', routes.notification_log)
 
 

@@ -2,6 +2,7 @@ from aiohttp import web
 from server.processing.users import user_get, user_create, user_update, user_delete
 from server.processing.sensors import sensor_get, sensor_create, sensor_update, sensor_delete
 from server.processing.notification_log import filtred_log_get
+from server.processing.relation import set_relation
 from settings import TOKEN
 
 
@@ -40,6 +41,18 @@ async def sensor(request):
         return await sensor_delete(request)
 
     # TODO: PATCH
+
+
+async def relation(request):
+    if request.headers.get('AUTH_TOKEN') != TOKEN:
+        return web.HTTPForbidden()
+
+    if request.method == 'POST':
+        return await set_relation(request)
+
+    # TODO: остальные методы Rest
+
+    return await set_relation(request)
 
 
 async def notification_log(request):

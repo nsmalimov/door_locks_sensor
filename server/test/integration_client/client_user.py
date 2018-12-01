@@ -1,7 +1,7 @@
 import aiohttp
 import asyncio
 
-from server.test.client.request_funcs import get, delete, put, post
+from server.test.integration_client.request_funcs import get, delete, put, post
 
 url = 'http://localhost:8080'
 
