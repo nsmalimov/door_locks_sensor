@@ -20,19 +20,16 @@ CREATE TYPE notification_type AS ENUM ('status_change','connection_status');
 
 CREATE TABLE SENSOR_DATA_LOG(
   sensor_id TEXT REFERENCES SENSOR(id),
-  data int,
-  time TIMESTAMP
+  sensor_data_data int,
+  sensor_data_time TIMESTAMP
 );
 
 CREATE TABLE NOTIFICATION_LOG(
-  type notification_type,
+  notification_type notification_type,
   locked BOOLEAN,
   stable BOOLEAN,
-  address text,
   sensor_id TEXT REFERENCES SENSOR(id),
-  sensor_address TEXT,
   user_id INT REFERENCES USER_TABLE(id),
-  user_name TEXT,
-  time TIMESTAMP
+  notification_time TIMESTAMP
 );
 

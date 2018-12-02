@@ -20,11 +20,11 @@ async def connect_to_rabbitmq():
     return transport, protocol, channel
 
 
-async def connect_to_psql():
+async def connect_to_redis():
     return await asyncio_redis.Connection.create(host=REDIS_URL, port=REDIS_PORT)
 
 
-async def connect_to_redis():
+async def connect_to_psql():
     return await asyncpg.connect(user=PSQL_USERNAME,
                                  password=PSQL_PASSWORD,
                                  database=PSQL_DATABASE,

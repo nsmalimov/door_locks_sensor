@@ -1,12 +1,14 @@
 import asyncio
 import aiohttp
-from connections.connections import connect_to_rabbitmq, connect_to_redis
+from connections.connections import connect_to_rabbitmq, connect_to_redis, connect_to_psql
 from settings import RABBITMQ_QUEUE_SENSOR
 import json
 from processing_network.request_funcs import post
-from domain.data_getter import get_sensor_from_cache, get_user_by_sensor_id_from_cache
+from domain.data_processing import get_sensor_from_cache, get_user_by_sensor_id_from_cache, \
+    save_sensor_data_log, save_notification_data_log
 
-def send_data_to_user(sensor_address, sensor_data, time, user_url):
+
+async def send_data_to_user(sensor_address, sensor_data, time, user_url):
     data = {
         'type': 'status_change',
         'locked': bool(sensor_data),
@@ -29,6 +31,8 @@ class SensorConsumer():
 
         self.redis_connection = await connect_to_redis()
 
+        self.psql_connection = await connect_to_psql()
+
     async def do_work(self, envelope, body):
         data = json.loads(body)
         sensor_id = data['id']
@@ -37,15 +41,34 @@ class SensorConsumer():
         # TODO
         # если пустой идти в базу и актуализировать данные в кеше (потёрлись)
 
-        user = await get_user_by_sensor_id_from_cache(sensor_id, self.redis_connection)
+        user_from_cache = await get_user_by_sensor_id_from_cache(sensor_id, self.redis_connection)
 
-        send_data_to_user(sensor_from_cache['address'], data['data'], data['time'], user['url'])
+        await send_data_to_user(sensor_from_cache['address'], data['data'], data['time'], user_from_cache['url'])
+
+        # возможно будут долгими операциями, переделать на отсылание по tcp в ES?
+        # но по идее 1000 в сек, должно прожевать
+        await save_sensor_data_log(sensor_id=sensor_id,
+                                   sensor_data_data=data['data'],
+                                   sensor_data_time=data['time'],
+                                   psql_connection=self.psql_connection)
+
+        await save_notification_data_log(notification_type='status_change',
+                                         locked=bool(data['data']),
+                                         stable=True,
+                                         sensor_id=sensor_id,
+                                         user_id=user_from_cache['id'],
+                                         notification_time=data['time'],
+                                         psql_connection=self.psql_connection)
+
+        # TODO: отсылать в кибану, сентри, писать логи
 
     async def callback(self, channel, body, envelope, properties):
         asyncio.get_event_loop().create_task(self.do_work(envelope, body))
 
 
 async def start_consumer():
+    # todo: sentry
+
     sc = SensorConsumer()
 
     await sc.rabbit_channel.queue_declare(queue_name=RABBITMQ_QUEUE_SENSOR)
