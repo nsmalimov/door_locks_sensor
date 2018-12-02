@@ -1,14 +1,20 @@
 import asyncio
 import json
-from consumer.rabbitmq_connection import connect_to_rabbitmq
+from connections.connections import connect_to_rabbitmq
 from datetime import datetime
 from settings import RABBITMQ_QUEUE_SENSOR
+import random
+from tests.test_data.sensors import sensors_id
 
-data = {
-    'id': '05b72d64-7232-4b',
-    'time': str(datetime.utcnow()),
-    'data': 1
-}
+
+def gen_data():
+    data = {
+        'id': sensors_id[random.randint(0, len(sensors_id) - 1)],
+        'time': str(datetime.utcnow()),
+        'data': random.randint(0, 1)
+    }
+
+    return data
 
 
 async def init_connect():
@@ -22,9 +28,9 @@ async def init_connect():
 
 
 async def send_message(channel):
-    print ('send_message')
+    print('send_message')
     await channel.basic_publish(
-        payload=json.dumps(data),
+        payload=json.dumps(gen_data()),
         exchange_name='',
         routing_key=RABBITMQ_QUEUE_SENSOR
     )

@@ -1,9 +1,8 @@
-import asyncio_redis
-import asyncpg
+from connections.connections import connect_to_redis, connect_to_psql
 from aiohttp import web
 from server.routes import routes
 import asyncio
-from settings import PSQL_USERNAME, PSQL_PASSWORD, PSQL_PORT, PSQL_URL, PSQL_DATABASE, PORT, REDIS_URL, REDIS_PORT
+from settings import PORT
 
 app = web.Application()
 
@@ -23,13 +22,9 @@ def setup_routes(app):
 
 async def init_connections(app):
     # todo: можно разделить и обрабатывать exceptions каждого
-    app.psql_connection = await asyncpg.connect(user=PSQL_USERNAME,
-                                 password=PSQL_PASSWORD,
-                                 database=PSQL_DATABASE,
-                                 port=PSQL_PORT,
-                                 host=PSQL_URL)
+    app.psql_connection = await connect_to_psql()
 
-    app.redis_connection = await asyncio_redis.Connection.create(host=REDIS_URL, port=REDIS_PORT)
+    app.redis_connection = await connect_to_redis()
 
 
 def setup_connections(app):
