@@ -41,8 +41,8 @@ async def get_data_with_stable_false():
 
     await send_to_user_stable_false(sensor_ids, redis_connection)
 
-    await redis_connection.close()
     redis_connection.close()
+    await psql_connection.close()
 
 
 if __name__ == "__main__":
